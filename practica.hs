@@ -105,6 +105,5 @@ introducirPalabras = do
   longitudMedia <- lengthMedia (splitLines  linea)
   putStr "La longitud media de las palabras introducidas es: "
   print(longitudMedia)
-  --let longitudMedia = lengthMedia (splitLines linea) in print longitudMedia 
 
 
