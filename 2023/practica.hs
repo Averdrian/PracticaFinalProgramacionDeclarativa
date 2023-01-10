@@ -17,10 +17,10 @@ instance Show Formula where
 esClausula :: Formula -> Bool
 -- esClausula f
 --     | f == (PROP _) = True
---     -- | f == NOT x = esClausula x
---     -- | f == OR f1 f2 = esClausula f1 && esClausula f2
---     -- | f == AND _ _ = False
---     -- | f == PARENTESIS x = esClausula x
+--     | f == NOT x = esClausula x
+--     | f == OR f1 f2 = esClausula f1 && esClausula f2
+--     | f == AND _ _ = False
+--     | f == PARENTESIS x = esClausula x
 --     | otherwise = False
 
 esClausula (PROP _) = True
@@ -28,3 +28,12 @@ esClausula (OR f1 f2) = esClausula f1 && esClausula f2
 esClausula (NOT f) = esClausula f
 esClausula (PARENTESIS f) = esClausula f
 esClausula (AND _ _) = False
+
+fncAlista :: Formula -> [Prop]
+-- fncAlista f = if f == (AND f1 f2) then fncAlista f1:fncAlista f2 else []
+fncAlista (PROP x) = [x]
+fncAlista (AND f1 f2) = (fncAlista f1) ++ (fncAlista f2)
+fncAlista (_) = error "La formula no esta en FNC"
+-- fncAlista (OR _ _) = [P]
+-- fncAlista (NOT _) = [S]
+-- fncAlista (PARENTESIS _) = [P]
