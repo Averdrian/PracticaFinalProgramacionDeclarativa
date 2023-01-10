@@ -15,25 +15,17 @@ instance Show Formula where
 
 
 esClausula :: Formula -> Bool
--- esClausula f
---     | f == (PROP _) = True
---     | f == NOT x = esClausula x
---     | f == OR f1 f2 = esClausula f1 && esClausula f2
---     | f == AND _ _ = False
---     | f == PARENTESIS x = esClausula x
---     | otherwise = False
-
 esClausula (PROP _) = True
 esClausula (OR f1 f2) = esClausula f1 && esClausula f2
-esClausula (NOT f) = esClausula f
-esClausula (PARENTESIS f) = esClausula f
+esClausula (NOT (PROP _)) = True
+esClausula (NOT _) = False
 esClausula (AND _ _) = False
+esClausula (PARENTESIS _) = False
 
-fncAlista :: Formula -> [Prop]
--- fncAlista f = if f == (AND f1 f2) then fncAlista f1:fncAlista f2 else []
-fncAlista (PROP x) = [x]
-fncAlista (AND f1 f2) = (fncAlista f1) ++ (fncAlista f2)
-fncAlista (_) = error "La formula no esta en FNC"
--- fncAlista (OR _ _) = [P]
--- fncAlista (NOT _) = [S]
--- fncAlista (PARENTESIS _) = [P]
+
+fncAlista :: Formula -> [Formula]
+fncAlista (AND f1 f2) = let {x = if(esClausula f1) then [f1] else fncAlista f1; y = if(esClausula f2) then [f2] else fncAlista f2} in x++y
+fncAlista (OR f1 f2) = [OR f1 f2]
+fncAlista (PROP p) = [PROP p]
+fncAlista (PARENTESIS f) = fncAlista f
+fncAlista (NOT f) = if(esClausula f) then [NOT f] else error "NO ESTA EN FNC"
