@@ -1,16 +1,9 @@
 --ADRIAN ESTEVEZ GALLEGO
 
 --definicion del tipo Prop
-data Prop = P | Q | R | S
+data Prop = P | Q | R | S deriving(Show, Eq, Read)
 
---instanciar show en Prop 
-instance Show Prop where
-    show (P) = "P"
-    show (Q) = "Q"
-    show (R) = "R"
-    show (S) = "S"
-
-data Formula = PROP Prop | NOT Formula | OR Formula Formula | AND Formula Formula | PARENTESIS Formula
+data Formula = PROP Prop | NOT Formula | OR Formula Formula | AND Formula Formula | PARENTESIS Formula deriving(Eq, Read)
 
 instance Show Formula where
     show (PROP x) = show(x)
@@ -19,10 +12,19 @@ instance Show Formula where
     show (AND f1 f2) = show(f1) ++ " ^ " ++ show(f2)
     show (PARENTESIS f) = "(" ++ show(f) ++ ")"
 
+
+
 esClausula :: Formula -> Bool
-esClausula f
-    | f == PROP _ = True
-    | f == NOT x = esClausula x
-    | f == OR f1 f2 = esClausula f1 && esClausula f2
-    | f == AND _ _ = False
-    | f == PARENTESIS x = esClausula x
+-- esClausula f
+--     | f == (PROP _) = True
+--     -- | f == NOT x = esClausula x
+--     -- | f == OR f1 f2 = esClausula f1 && esClausula f2
+--     -- | f == AND _ _ = False
+--     -- | f == PARENTESIS x = esClausula x
+--     | otherwise = False
+
+esClausula (PROP _) = True
+esClausula (OR f1 f2) = esClausula f1 && esClausula f2
+esClausula (NOT f) = esClausula f
+esClausula (PARENTESIS f) = esClausula f
+esClausula (AND _ _) = False
