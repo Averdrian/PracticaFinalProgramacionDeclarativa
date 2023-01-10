@@ -37,3 +37,13 @@ clausulaLista (OR f1 f2) = clausulaLista f1 ++ clausulaLista f2
 clausulaLista (PROP p) = [PROP p]
 clausulaLista (NOT (PROP p)) = [NOT (PROP p)]
 clausulaLista _ = error "NO ES CLAUSULA"
+
+--devuelve si es un literal es positivo
+esLiteralPositivo :: Formula -> Bool
+esLiteralPositivo (NOT(PROP _)) = False
+esLiteralPositivo (PROP _) = True
+esLiteralPositivo _ = error "NO ES UN LITERAL"
+
+--devuelve cierto si es clausula de horn
+esClausulaHorn :: Formula -> Bool
+esClausulaHorn f = length (filter (\x -> esLiteralPositivo x) (clausulaLista f)) < 2
