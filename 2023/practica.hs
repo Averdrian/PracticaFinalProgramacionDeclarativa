@@ -25,7 +25,14 @@ esClausula (PARENTESIS _) = False
 
 fncAlista :: Formula -> [Formula]
 fncAlista (AND f1 f2) = let {x = if(esClausula f1) then [f1] else fncAlista f1; y = if(esClausula f2) then [f2] else fncAlista f2} in x++y
-fncAlista (OR f1 f2) = [OR f1 f2]
+fncAlista (OR f1 f2) = if(esClausula f1 && esClausula f2) then [OR f1 f2] else error "NO ESTA EN FNC"
 fncAlista (PROP p) = [PROP p]
 fncAlista (PARENTESIS f) = fncAlista f
 fncAlista (NOT f) = if(esClausula f) then [NOT f] else error "NO ESTA EN FNC"
+
+
+clausulaLista :: Formula -> [Formula]
+clausulaLista (OR f1 f2) = clausulaLista f1 ++ clausulaLista f2
+clausulaLista (PROP p) = [PROP p]
+clausulaLista (NOT (PROP p)) = [NOT (PROP p)]
+clausulaLista _ = error "NO ES CLAUSULA"
