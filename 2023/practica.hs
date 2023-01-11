@@ -46,4 +46,21 @@ esLiteralPositivo _ = error "NO ES UN LITERAL"
 
 --devuelve cierto si es clausula de horn
 esClausulaHorn :: Formula -> Bool
-esClausulaHorn f = length (filter (\x -> esLiteralPositivo x) (clausulaLista f)) < 2
+esClausulaHorn f = length (filter (esLiteralPositivo) (clausulaLista f)) < 2
+
+--devuelve la lista de literales del resolvente de dos clausulas
+resolvente :: [Formula] -> [Formula] -> [Formula]
+resolvente xs ys = let r = resolventeAux xs ys  in [x | x <- (xs ++ ys), (any (==x) r) == False]
+
+
+--devuelve la lista de literales, tanto positivos como negativos, que debemos eliminar para tener la lista de elementos del resolvente
+resolventeAux :: [Formula] -> [Formula] -> [Formula]
+resolventeAux (x:xs) ys = (resuelveUno x ys) ++ (resolventeAux xs ys)
+resolventeAux [] _ = []
+
+--develeve un literal y su negacion si debe quitarse del resolvente
+resuelveUno :: Formula -> [Formula] -> [Formula]
+resuelveUno (NOT x) (y:ys) = if(y == x) then [NOT x, y] else resuelveUno (NOT x) ys
+resuelveUno (PROP x) (y:ys) = if(NOT(PROP (x)) == y) then [PROP x, y] else resuelveUno (PROP x) ys
+resuelveUno _ [] = []
+resuelveUno _ _ = error "ELEMENTO NO VALIDO"
