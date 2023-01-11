@@ -64,3 +64,27 @@ resuelveUno (NOT x) (y:ys) = if(y == x) then [NOT x, y] else resuelveUno (NOT x)
 resuelveUno (PROP x) (y:ys) = if(NOT(PROP (x)) == y) then [PROP x, y] else resuelveUno (PROP x) ys
 resuelveUno _ [] = []
 resuelveUno _ _ = error "ELEMENTO NO VALIDO"
+
+
+resolucion :: [[Formula]] -> [Formula] -> [Formula]
+resolucion xs h = let x = resolucionAux xs h in if any (==False) (map (esLiteralPositivo) x)  then filter (\l -> esLiteralPositivo l == False) x else if (length x) < (length xs) then [] else x
+
+resolucionAux :: [[Formula]] -> [Formula] -> [Formula]
+resolucionAux (x:xs) h = let res = resolucionUnPaso (x:xs) h in if length res == 1 && esLiteralPositivo (res!!0) then res ++ resolucionAux (x:xs) (resolvente x h) else res
+resolucionAux _ [] = []
+resolucionAux [] _ = []
+
+resolucionUnPaso :: [[Formula]] -> [Formula] -> [Formula]
+resolucionUnPaso (x:xs) h = let z = (resolvente x h) in if  z == (x++h) then (resolucionUnPaso xs h) else if z == [] then z else [z!!0]
+resolucionUnPaso _ [] = []
+resolucionUnPaso [] _ = []
+
+menuAplicacion :: IO()
+menuAplicacion = do
+  putStr "Introduzca la fórmula: "
+  formulaStr <- getLine
+  putStr "¿Qué accion quieres realizar? \n 1. Comprobar si una fórmula es una clausula\n 2. Devolver lista de clausulas una fórmula en FNC \n 3. Comprobar si una fórmula es clausula de Horn\n"
+  let formula = read formulaStr :: Formula
+  opcion <- getChar
+  let respuesta = if opcion == '1' then show(esClausula formula) else if opcion == '2' then show(fncAlista formula) else show(esClausulaHorn formula)
+  print(respuesta)
